@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#02051a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Pathfinder Puzzle</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Fundo estrelado (desenhado por js/background.js) -->
+  <canvas id="bg"></canvas>
+
+  <!-- Todo o jogo vive dentro de #app, que tem o tamanho do design (819x1456)
+       e é escalado para caber em qualquer tela. -->
+  <main id="app">
+
+    <!-- ========== TELA 1: MENU PRINCIPAL ========== -->
+    <section class="screen" id="screen-home" data-theme="home">
+      <button class="icon-btn pos-left" data-go="help" aria-label="Ajuda">?</button>
+      <button class="icon-btn pos-right" data-go="settings" aria-label="Opções">
+        <svg viewBox="0 0 24 24" width="72" height="72" fill="currentColor">
+          <path d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6a.5.5 0 0 0 .1-.6l-2-3.5a.5.5 0 0 0-.6-.2l-2.5 1a7.4 7.4 0 0 0-1.7-1l-.4-2.6a.5.5 0 0 0-.5-.4h-4a.5.5 0 0 0-.5.4l-.4 2.6a7.4 7.4 0 0 0-1.7 1l-2.5-1a.5.5 0 0 0-.6.2l-2 3.5a.5.5 0 0 0 .1.6L4.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6a.5.5 0 0 0-.1.6l2 3.5c.1.2.4.3.6.2l2.5-1c.5.4 1.1.7 1.7 1l.4 2.6c0 .2.2.4.5.4h4c.3 0 .5-.2.5-.4l.4-2.6c.6-.3 1.2-.6 1.7-1l2.5 1c.2.1.5 0 .6-.2l2-3.5a.5.5 0 0 0-.1-.6L19.4 13ZM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"/>
+        </svg>
+      </button>
+
+      <div class="portal-logo">
+        <div class="portal-core">
+          <span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span>
+        </div>
+      </div>
+
+      <h1 class="game-title">NOME DO JOGO</h1>
+      <p class="game-tagline">Monte o caminho. Cruze o portal.</p>
+
+      <button class="play-btn" data-go="difficulty" aria-label="Jogar">
+        <span class="play-inner"><span class="play-triangle"></span></span>
+      </button>
+
+      <footer class="copyright">© Rapazes - 2026</footer>
+    </section>
+
+    <!-- ========== TELA 2: ESCOLHA DE DIFICULDADE ========== -->
+    <section class="screen" id="screen-difficulty" data-theme="difficulty">
+      <button class="back-btn" data-back aria-label="Voltar"></button>
+      <h2 class="screen-title two-lines">Escolha sua<br>dificuldade</h2>
+
+      <button class="diff-card easy" data-difficulty="easy">
+        <strong>Fácil</strong><span>Só o caminho até o portal</span>
+      </button>
+      <button class="diff-card medium" data-difficulty="medium">
+        <strong>Médio</strong><span>Moedas liberadas</span>
+      </button>
+      <button class="diff-card hard" data-difficulty="hard">
+        <strong>Difícil</strong><span>Moedas e inimigos</span>
+      </button>
+    </section>
+
+    <!-- ========== TELA 3: AJUDA (3 páginas, conteúdo em js/help.js) ========== -->
+    <section class="screen" id="screen-help" data-theme="dark">
+      <button class="back-btn" data-back aria-label="Voltar"></button>
+      <h2 class="screen-title">Ajuda</h2>
+      <div class="pill purple" id="help-page-label">Página 1 de 3</div>
+
+      <div class="help-card" id="help-card"></div>
+
+      <div class="dots" id="help-dots"><i></i><i></i><i></i></div>
+
+      <button class="btn-outline" id="help-prev">Voltar</button>
+      <button class="btn-solid"   id="help-next">Avançar</button>
+    </section>
+
+    <!-- ========== TELA 4: JOGO (edição / execução) ========== -->
+    <section class="screen" id="screen-game" data-theme="dark">
+      <button class="back-btn" data-back aria-label="Voltar"></button>
+
+      <div class="timer-pill">
+        <span class="clock-icon">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#0b1138"
+               stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v7.5l3.5 2.5"/>
+          </svg>
+        </span>
+        <span class="timer-text" id="game-timer">1:30</span>
+      </div>
+
+      <h2 class="mode-title">Normal</h2>
+      <div class="pill diff-badge easy" id="game-badge">FÁCIL</div>
+
+      <canvas id="board" width="640" height="640"></canvas>
+
+      <button class="btn-start" id="game-action">Iniciar</button>
+    </section>
+
+    <!-- ========== TELA 5: OPÇÕES (não faz parte do PDF; criada p/ o ícone de engrenagem) ========== -->
+    <section class="screen" id="screen-settings" data-theme="dark">
+      <button class="back-btn" data-back aria-label="Voltar"></button>
+      <h2 class="screen-title">Opções</h2>
+
+      <div class="settings-card">
+        <label class="setting-row">
+          <span>Som</span>
+          <input type="checkbox" id="opt-sound"><i class="switch"></i>
+        </label>
+        <label class="setting-row">
+          <span>Modo daltônico</span>
+          <input type="checkbox" id="opt-colorblind"><i class="switch"></i>
+        </label>
+        <div class="setting-row disabled">
+          <span>Idioma</span><em>Português (BR)</em>
+        </div>
+      </div>
+    </section>
+
+    <div id="toast" role="status"></div>
+  </main>
+
+  <!-- Scripts clássicos (sem módulos) para funcionar até com duplo clique no arquivo -->
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/geometry.js"></script>
+  <script src="js/level.js"></script>
+  <script src="js/background.js"></script>
+  <script src="js/help.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

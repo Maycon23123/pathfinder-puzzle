@@ -1,0 +1,16 @@
+{
+  "name": "Pathfinder Puzzle",
+  "short_name": "Pathfinder",
+  "description": "Monte o caminho. Cruze o portal.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#02051a",
+  "theme_color": "#02051a",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
