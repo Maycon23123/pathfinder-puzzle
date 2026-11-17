@@ -1,13 +1,14 @@
 /* Service worker: guarda os arquivos do jogo para funcionar offline (PWA).
    Ao alterar qualquer arquivo, aumente CACHE_VERSION para forçar a atualização. */
-var CACHE_VERSION = "pathfinder-v0.1.0";
+var CACHE_VERSION = "pathfinder-v0.2.0";
 var FILES = [
   "./", "index.html", "manifest.webmanifest", "css/style.css",
-  "js/config.js", "js/storage.js", "js/audio.js", "js/geometry.js", "js/level.js",
-  "js/background.js", "js/help.js", "js/game.js", "js/app.js",
+  "js/config.js", "js/rng.js", "js/storage.js", "js/audio.js", "js/geometry.js",
+  "js/physics.js", "js/pathfinding.js", "js/level.js",
+  "js/background.js", "js/help.js", "js/game.js", "js/moba.js", "js/app.js",
   "fonts/poppins-latin-400-normal.woff2", "fonts/poppins-latin-500-normal.woff2",
   "fonts/poppins-latin-600-normal.woff2", "fonts/poppins-latin-700-normal.woff2",
-  "icons/icon-192.png", "icons/icon-512.png"
+  "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-192.png", "icons/icon-maskable-512.png"
 ];
 
 self.addEventListener("install", function (e) {
@@ -23,6 +24,16 @@ self.addEventListener("activate", function (e) {
   self.clients.claim();
 });
 
+/* Rede primeiro (pega a versão nova quando há internet); se estiver offline, usa o cache. */
 self.addEventListener("fetch", function (e) {
-  e.respondWith(caches.match(e.request).then(function (hit) { return hit || fetch(e.request); }));
+  if (e.request.method !== "GET") return;
+  e.respondWith(
+    fetch(e.request).then(function (resp) {
+      var copy = resp.clone();
+      caches.open(CACHE_VERSION).then(function (c) { c.put(e.request, copy); });
+      return resp;
+    }).catch(function () {
+      return caches.match(e.request).then(function (hit) { return hit || caches.match("index.html"); });
+    })
+  );
 });

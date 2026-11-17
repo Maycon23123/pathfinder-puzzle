@@ -57,6 +57,8 @@ Se mais tarde a equipe quiser migrar para Unity/Godot, as regras (`level.js`, `g
 ```
 pathfinder-puzzle/
 ├── README.md
+├── tests/                       testes do gerador de fases (npm test)
+├── scripts/make-netlify-zip.sh  gera o zip do Netlify Drop
 ├── package.json                 scripts para o Capacitor (APK)
 ├── capacitor.config.json        nome e id do app Android
 ├── docs/DOCUMENTACAO.md         este arquivo
@@ -231,3 +233,13 @@ ignorado sem problema (os arquivos já ficam no aparelho).
 
 - Fonte **Poppins** - SIL Open Font License (arquivo em `www/fonts/`).
 - Restante do código: equipe do projeto (Rapazes, 2026).
+
+
+## 9. Versão 0.2 - o que mudou (jogável)
+
+- **Confirmação:** ao tocar em *Iniciar* aparece "Confirmar caminho?" (movimentos, tempo restante e aviso se o portal ainda não está ligado). Só depois de confirmar as linhas travam.
+- **Fases mais difíceis:** toda fase é montada a partir da solução (cadeia de peças até o portal), recebe peças-isca e é embaralhada. Médio/Difícil adicionam moedas obrigatórias, inimigos, giro de peças (toque), limite de movimentos (mínimo + folga) e tempo de planejamento menor. Parâmetros em `PP.levelParams` (`config.js`).
+- **Modos (do documento V04):** Padrão (`pathfinding.js`), Gravitacional (`physics.js`, simulação determinística), SpeedRun (5 puzzles com semente fixa, +5 s por derrota, ranking local com rivais simulados) e Skill Check (`moba.js`, API `PathfinderPuzzle.startSkillCheck`, `postMessage` e `?skillcheck=1`).
+- **Solução garantida (RF-04/RG-10):** `level.js` monta a solução, valida (Dijkstra ou física) e só então embaralha; `npm test` confere centenas de fases.
+- **Acesso:** `npm run zip` para o Netlify Drop; PWA instalável (tela *Opções → Instalar no celular*); plano B em `docs/PROMPT-HERMES-APK.md`.
+- **Não incluído ainda:** gravidade em outras direções (RF-22) e seleção de idioma.

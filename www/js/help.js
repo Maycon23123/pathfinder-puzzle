@@ -39,22 +39,29 @@ PP.Help = (function () {
     '<h3 class="help-heading">Como jogar</h3>' +
     '<p class="help-sub">Modo padrão</p>' +
     '<div class="help-items">' +
-      numbered(1, "Monte um caminho até o portal usando as peças disponíveis na área de jogo.") +
-      numbered(2, "Você deve apertar nos lados que você deseja andar, assim andando um quadrado.") +
-      numbered(3, "Arraste as peças para fazer seus caminhos. Quando você quiser começar, aperte Iniciar para andar pelo seu caminho.") +
+      numbered(1, "Arraste as linhas para ligar o personagem (centro) ao portal. Linhas só se conectam pelas pontas; não podem se cruzar.") +
+      numbered(2, "Nas fases com giro, toque numa linha (sem arrastar) para girá-la 90°. Use Desfazer, Refazer e Restaurar à vontade.") +
+      numbered(3, "Toque em Iniciar e confirme. As linhas travam e o personagem anda sozinho pelo caminho que você montou.") +
     '</div>',
 
     '<h3 class="help-heading">Elementos e obstáculos</h3>' +
-    '<div class="help-chip">Liberados no modo médio ou difícil</div>' +
+    '<div class="help-chip">Moedas e inimigos: médio e difícil</div>' +
     '<div class="help-items">' +
-      titled(ICON_COIN, "Moeda", "Adiciona pontos extras, que obrigatoriamente devem ser passados antes de terminar a fase.") +
-      titled(ICON_ENEMY, "Inimigo", "Bloqueia o caminho, mais informações em novas atualizações.") +
+      titled(ICON_COIN, "Moeda", "Obrigatória: o caminho precisa passar por todas antes de entrar no portal.") +
+      titled(ICON_ENEMY, "Inimigo", "Bloqueia o ponto onde está. Se o caminho passar por ele, você perde.") +
+    '</div>',
+
+    '<h3 class="help-heading">Modos de jogo</h3>' +
+    '<div class="help-items">' +
+      titled('<span class="num">G</span>', "Gravitacional", "Vista lateral: o personagem é uma bolinha. Monte rampas e plataformas para ele rolar até o portal no chão. Cair no vazio é derrota.") +
+      titled('<span class="num">⏱</span>', "SpeedRun", "Vença 5 puzzles seguidos no menor tempo e compare com o ranking.") +
+      titled('<span class="num">⚔</span>', "Skill Check", "Puzzle relâmpago para um MOBA: vencer rápido desbloqueia bônus temporários.") +
     '</div>',
 
     '<h3 class="help-heading">Painel da fase</h3>' +
     '<div class="help-items">' +
-      titled(ICON_CLOCK, "Tempo", "O cronograma irá contar quando você apertar no botão de iniciar, e caso volte para a tela de edição, o cronômetro será pausado e só voltará na hora que iniciar novamente. Quando ele zera, a fase será totalmente resetada.") +
-      titled('<span class="num">4</span>', "Voltar ao início", "Caso você edite a fase, sendo que já moveu seu personagem, o mesmo vai voltar para o centro.") +
+      titled(ICON_CLOCK, "Tempo", "É o tempo de planejamento. Quando zera, a execução começa sozinha com o arranjo atual.") +
+      titled('<span class="num">4</span>', "Movimentos", "Cada arraste ou giro conta. Nas fases com limite, ao esgotar a execução começa automaticamente.") +
     '</div>'
   ];
 
@@ -62,7 +69,12 @@ PP.Help = (function () {
   function render() {
     document.getElementById("help-card").innerHTML = PAGES[page];
     document.getElementById("help-page-label").textContent = "Página " + (page + 1) + " de " + PAGES.length;
-    var dots = document.querySelectorAll("#help-dots i");
+    var holder = document.getElementById("help-dots");
+    if (holder.children.length !== PAGES.length) {
+      holder.innerHTML = "";
+      for (var d = 0; d < PAGES.length; d++) holder.appendChild(document.createElement("i"));
+    }
+    var dots = holder.querySelectorAll("i");
     for (var i = 0; i < dots.length; i++) dots[i].classList.toggle("on", i === page);
   }
 

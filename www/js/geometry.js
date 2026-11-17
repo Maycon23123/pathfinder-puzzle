@@ -45,5 +45,12 @@ PP.Geo = (function () {
     return false;
   }
 
-  return { distToSegment: distToSegment, orient: orient, segmentsConflict: segmentsConflict };
+  /** Máximo divisor comum (para dividir um segmento em passos unitários da grade). */
+  function gcd(a, b) {
+    a = Math.round(a); b = Math.round(b);
+    while (b) { var t = a % b; a = b; b = t; }
+    return a;
+  }
+
+  return { distToSegment: distToSegment, orient: orient, segmentsConflict: segmentsConflict, gcd: gcd };
 })();

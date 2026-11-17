@@ -7,6 +7,9 @@
   <meta name="theme-color" content="#02051a">
   <meta name="mobile-web-app-capable" content="yes">
   <title>Pathfinder Puzzle</title>
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Pathfinder">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png">
   <link rel="stylesheet" href="css/style.css">
@@ -35,14 +38,35 @@
         </div>
       </div>
 
-      <h1 class="game-title">NOME DO JOGO</h1>
+      <button class="install-pill" id="home-install" data-go="install" hidden>Instalar no celular</button>
+
+      <h1 class="game-title">PATHFINDER<br>PUZZLE</h1>
       <p class="game-tagline">Monte o caminho. Cruze o portal.</p>
 
-      <button class="play-btn" data-go="difficulty" aria-label="Jogar">
+      <button class="play-btn" data-go="mode" aria-label="Jogar">
         <span class="play-inner"><span class="play-triangle"></span></span>
       </button>
 
       <footer class="copyright">© Rapazes - 2026</footer>
+    </section>
+
+    <!-- ========== TELA 1B: ESCOLHA DO MODO (RF23) ========== -->
+    <section class="screen" id="screen-mode" data-theme="difficulty">
+      <button class="back-btn" data-back aria-label="Voltar"></button>
+      <h2 class="screen-title two-lines">Escolha o<br>modo de jogo</h2>
+
+      <button class="mode-card std" data-mode="std">
+        <strong>Padrão</strong><span>Vista de cima: ligue o centro ao portal</span>
+      </button>
+      <button class="mode-card grav" data-mode="grav">
+        <strong>Gravitacional</strong><span>Vista lateral: linhas viram rampas e paredes</span>
+      </button>
+      <button class="mode-card speed" data-mode="speed">
+        <strong>SpeedRun</strong><span>5 puzzles no menor tempo, com ranking</span>
+      </button>
+      <button class="mode-card skill" data-mode="skill">
+        <strong>Skill Check (MOBA)</strong><span>Puzzle relâmpago que dá bônus na partida</span>
+      </button>
     </section>
 
     <!-- ========== TELA 2: ESCOLHA DE DIFICULDADE ========== -->
@@ -51,33 +75,44 @@
       <h2 class="screen-title two-lines">Escolha sua<br>dificuldade</h2>
 
       <button class="diff-card easy" data-difficulty="easy">
-        <strong>Fácil</strong><span>Só o caminho até o portal</span>
+        <strong>Fácil</strong><span>Sem moedas nem inimigos, sem limite de movimentos</span>
       </button>
       <button class="diff-card medium" data-difficulty="medium">
-        <strong>Médio</strong><span>Moedas liberadas</span>
+        <strong>Médio</strong><span>Moedas, limite de movimentos e giro de peças</span>
       </button>
       <button class="diff-card hard" data-difficulty="hard">
-        <strong>Difícil</strong><span>Moedas e inimigos</span>
+        <strong>Difícil</strong><span>Moedas, inimigos, giro e tempo curto</span>
       </button>
+    </section>
+
+    <!-- ========== TELA 2B: ESCOLHA DA FASE (RF28) ========== -->
+    <section class="screen" id="screen-levels" data-theme="difficulty">
+      <button class="back-btn" data-back aria-label="Voltar"></button>
+      <h2 class="screen-title">Fases</h2>
+      <div class="pill purple wide" id="levels-label">Padrão · Fácil</div>
+      <div class="levels-grid" id="levels-grid"></div>
     </section>
 
     <!-- ========== TELA 3: AJUDA (3 páginas, conteúdo em js/help.js) ========== -->
     <section class="screen" id="screen-help" data-theme="dark">
       <button class="back-btn" data-back aria-label="Voltar"></button>
       <h2 class="screen-title">Ajuda</h2>
-      <div class="pill purple" id="help-page-label">Página 1 de 3</div>
+      <div class="pill purple" id="help-page-label">Página 1 de 4</div>
 
       <div class="help-card" id="help-card"></div>
 
-      <div class="dots" id="help-dots"><i></i><i></i><i></i></div>
+      <div class="dots" id="help-dots"></div>
 
       <button class="btn-outline" id="help-prev">Voltar</button>
       <button class="btn-solid"   id="help-next">Avançar</button>
     </section>
 
-    <!-- ========== TELA 4: JOGO (edição / execução) ========== -->
+    <!-- ========== TELA 4: JOGO (planejar / confirmar / executar) ========== -->
     <section class="screen" id="screen-game" data-theme="dark">
       <button class="back-btn" data-back aria-label="Voltar"></button>
+      <button class="icon-btn pos-right" id="btn-pause" aria-label="Pausar">
+        <svg viewBox="0 0 24 24" width="64" height="64" fill="currentColor"><rect x="6" y="4.5" width="4.2" height="15" rx="1.2"/><rect x="13.8" y="4.5" width="4.2" height="15" rx="1.2"/></svg>
+      </button>
 
       <div class="timer-pill">
         <span class="clock-icon">
@@ -89,10 +124,22 @@
         <span class="timer-text" id="game-timer">1:30</span>
       </div>
 
-      <h2 class="mode-title">Normal</h2>
+      <h2 class="mode-title" id="game-title">Padrão</h2>
       <div class="pill diff-badge easy" id="game-badge">FÁCIL</div>
 
+      <div class="hud">
+        <span class="chip" id="hud-moves">Mov 0/∞</span>
+        <span class="chip" id="hud-coins">Sem moedas</span>
+        <span class="chip" id="hud-rotate">Giro desligado</span>
+      </div>
+
       <canvas id="board" width="640" height="640"></canvas>
+
+      <div class="tools">
+        <button class="tool-btn" id="btn-undo">Desfazer</button>
+        <button class="tool-btn" id="btn-redo">Refazer</button>
+        <button class="tool-btn" id="btn-reset">Restaurar</button>
+      </div>
 
       <button class="btn-start" id="game-action">Iniciar</button>
     </section>
@@ -111,24 +158,59 @@
           <span>Modo daltônico</span>
           <input type="checkbox" id="opt-colorblind"><i class="switch"></i>
         </label>
+        <label class="setting-row">
+          <span>Liberar todas as fases</span>
+          <input type="checkbox" id="opt-unlock"><i class="switch"></i>
+        </label>
         <div class="setting-row disabled">
           <span>Idioma</span><em>Português (BR)</em>
         </div>
+        <button class="setting-row link" data-go="install"><span>Instalar no celular</span><em>›</em></button>
       </div>
     </section>
+
+    <!-- ========== TELA 6: INSTALAR NO CELULAR (PWA) ========== -->
+    <section class="screen" id="screen-install" data-theme="dark">
+      <button class="back-btn" data-back aria-label="Voltar"></button>
+      <h2 class="screen-title two-lines">Instalar no<br>celular</h2>
+      <div class="install-card">
+        <p class="install-status" id="install-status"></p>
+        <h3>Android (Chrome)</h3>
+        <p>Menu ⋮ → <b>Instalar app</b> (ou <b>Adicionar à tela inicial</b>). O Chrome cria um app de verdade, com ícone, sem barra do navegador e funcionando offline.</p>
+        <h3>iPhone (Safari)</h3>
+        <p>Botão Compartilhar → <b>Adicionar à Tela de Início</b>.</p>
+        <h3>Computador</h3>
+        <p>Chrome ou Edge: ícone de instalar na barra de endereço.</p>
+        <button class="m-btn primary" id="install-btn" hidden>Instalar agora</button>
+      </div>
+    </section>
+
+    <div id="modal" class="modal" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <h3 id="modal-title"></h3>
+        <p id="modal-text"></p>
+        <p id="modal-warn" class="modal-warn"></p>
+        <div id="modal-stats" class="modal-stats"></div>
+        <div id="modal-actions" class="modal-actions"></div>
+      </div>
+    </div>
 
     <div id="toast" role="status"></div>
   </main>
 
   <!-- Scripts clássicos (sem módulos) para funcionar até com duplo clique no arquivo -->
   <script src="js/config.js"></script>
+  <script src="js/rng.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/geometry.js"></script>
+  <script src="js/physics.js"></script>
+  <script src="js/pathfinding.js"></script>
   <script src="js/level.js"></script>
   <script src="js/background.js"></script>
   <script src="js/help.js"></script>
   <script src="js/game.js"></script>
+  <script src="js/moba.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
