@@ -1,0 +1,448 @@
+/* ==========================================================================
+   Pathfinder Puzzle - estilos
+   --------------------------------------------------------------------------
+   Todas as medidas estão em "pixels de design" (tela de 819 x 1456, o mesmo
+   tamanho das telas do PDF). O JavaScript escala #app para caber na tela real,
+   então estas medidas valem para qualquer celular ou monitor.
+   ========================================================================== */
+
+/* ---------- Fonte (Poppins, embutida para funcionar offline) ---------- */
+@font-face { font-family: "Poppins"; font-weight: 400; src: url("../fonts/poppins-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-weight: 500; src: url("../fonts/poppins-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-weight: 600; src: url("../fonts/poppins-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-weight: 700; src: url("../fonts/poppins-latin-700-normal.woff2") format("woff2"); }
+
+/* ---------- Paleta ---------- */
+:root {
+  --ink:      #0e1033;   /* texto escuro sobre botões claros */
+  --navy:     #0b1138;   /* fundo de botões/cartões escuros */
+  --cyan:     #22d6ee;
+  --teal:     #5eead4;
+  --lavender: #b9c0f5;
+  --purple:   #6d46c1;
+  --good:     #4ade80;   /* fácil */
+  --mid:      #facc15;   /* médio */
+  --bad:      #ff4d4d;   /* difícil */
+}
+
+/* Modo daltônico: troca verde/amarelo/vermelho por cores distinguíveis
+   (paleta Okabe-Ito). Ativado pela classe .colorblind no <body>. */
+body.colorblind {
+  --good: #56b4e9;
+  --mid:  #f0e442;
+  --bad:  #e8742a;
+}
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #02051a;
+  overscroll-behavior: none;          /* evita "puxar para atualizar" no Android */
+  font-family: "Poppins", system-ui, sans-serif;
+  color: #fff;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+button { font: inherit; color: inherit; border: 0; padding: 0; background: none; cursor: pointer; }
+
+#bg { position: fixed; inset: 0; width: 100%; height: 100%; }
+
+/* Contêiner do jogo: tamanho fixo de design, centralizado e escalado via --s */
+#app {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 819px;
+  height: 1456px;
+  transform: translate(-50%, -50%) scale(var(--s, 0.5));
+  transform-origin: center center;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+.screen.active { display: block; animation: fade-in .3s ease; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- Elementos comuns ---------- */
+.back-btn {
+  position: absolute;
+  left: 58px; top: 64px;
+  width: 60px; height: 70px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 70'%3E%3Cpath d='M38 12 15 35l23 23' fill='none' stroke='%23fff' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.icon-btn {
+  position: absolute;
+  top: 66px;
+  width: 72px; height: 72px;
+  color: #e8eaff;
+  display: grid; place-items: center;
+}
+.icon-btn.pos-right { right: 51px; }
+.icon-btn.pos-left  {
+  left: 52px;
+  border: 5px solid #e8eaff; border-radius: 50%;
+  width: 64px; height: 64px; margin-top: 4px;
+  font-size: 38px; font-weight: 700;
+}
+
+.screen-title {
+  position: absolute;
+  left: 0; right: 0; top: 150px;
+  margin: 0;
+  text-align: center;
+  font-size: 72px; font-weight: 700; line-height: 106px;
+}
+.screen-title.two-lines { top: 192px; font-size: 64px; line-height: 76px; }
+
+.pill {
+  position: absolute;
+  display: grid; place-items: center;
+  font-weight: 700;
+}
+.pill.purple {
+  left: 273px; top: 273px; width: 272px; height: 54px;
+  background: var(--purple); border-radius: 27px; font-size: 22px;
+}
+
+.btn-outline, .btn-solid {
+  position: absolute; top: 1288px; height: 110px;
+  border-radius: 55px;
+  font-size: 34px; font-weight: 700;
+}
+.btn-outline { left: 54px;  width: 329px; background: var(--navy); border: 3px solid var(--teal); }
+.btn-solid   { left: 437px; width: 328px; background: var(--cyan); color: var(--ink); }
+
+/* ==========================================================================
+   TELA 1 - MENU PRINCIPAL
+   ========================================================================== */
+.portal-logo {
+  position: absolute; left: 222px; top: 325px;
+  width: 376px; height: 376px; border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 70px 20px rgba(94, 234, 212, .45);
+  animation: pulse 3.2s ease-in-out infinite;
+}
+@keyframes pulse { 50% { box-shadow: 0 0 90px 34px rgba(94, 234, 212, .6); } }
+
+.portal-core {
+  position: absolute; inset: 31px; border-radius: 50%;
+  background: linear-gradient(135deg, #6f7be0 0%, #4d8ec8 50%, #3aa39b 100%);
+}
+.portal-core .ring {
+  position: absolute; left: 50%; top: 50%; border-radius: 50%;
+  border: 5px solid rgba(255, 255, 255, .42);
+  transform: translate(-50%, -50%);
+}
+.ring.r1 { width: 234px; height: 234px; }
+.ring.r2 { width: 164px; height: 164px; }
+.ring.r3 { width: 94px;  height: 94px; }
+
+.game-title {
+  position: absolute; left: 0; right: 0; top: 790px; margin: 0;
+  text-align: center; font-size: 58px; font-weight: 700; letter-spacing: 6px; line-height: 72px;
+}
+.game-tagline {
+  position: absolute; left: 0; right: 0; top: 950px; margin: 0;
+  text-align: center; font-size: 29px; color: #a6e8fa; line-height: 48px;
+}
+
+.play-btn {
+  position: absolute; left: 290px; top: 1037px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: rgba(34, 214, 238, .22);
+  border: 2px solid rgba(34, 214, 238, .8);
+  display: grid; place-items: center;
+  transition: transform .15s;
+}
+.play-btn:active { transform: scale(.94); }
+.play-inner {
+  width: 190px; height: 190px; border-radius: 50%;
+  background: var(--cyan); border: 7px solid #fff;
+  display: grid; place-items: center;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .4);
+}
+.play-triangle {
+  width: 0; height: 0; margin-left: 12px;
+  border-left: 74px solid #0c1033;
+  border-top: 40px solid transparent;
+  border-bottom: 40px solid transparent;
+  border-radius: 6px;
+  filter: drop-shadow(0 0 0 #0c1033);
+}
+
+.copyright {
+  position: absolute; left: 0; right: 0; top: 1366px;
+  text-align: center; font-size: 22px; color: rgba(255, 255, 255, .78);
+}
+
+/* ==========================================================================
+   TELA 2 - DIFICULDADE
+   ========================================================================== */
+.diff-card {
+  position: absolute; left: 92px; width: 635px; height: 242px;
+  border: 3px solid #fff; border-radius: 42px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--ink);
+  transition: transform .12s;
+}
+.diff-card:active { transform: scale(.97); }
+.diff-card strong { font-size: 56px; font-weight: 700; line-height: 76px; }
+.diff-card span   { font-size: 26px; line-height: 40px; }
+.diff-card.easy   { top: 425px;  background: var(--good); }
+.diff-card.medium { top: 725px;  background: var(--mid); }
+.diff-card.hard   { top: 1026px; background: var(--bad); }
+
+/* ==========================================================================
+   TELA 3 - AJUDA
+   ========================================================================== */
+.help-card {
+  position: absolute; left: 54px; top: 382px; width: 711px; height: 786px;
+  background: rgba(8, 12, 45, .88);
+  border: 3px solid var(--teal); border-radius: 42px;
+  padding: 44px 40px 36px;
+  display: flex; flex-direction: column;
+}
+.help-heading { margin: 0; text-align: center; font-size: 48px; font-weight: 700; color: var(--teal); line-height: 66px; }
+.help-sub     { margin: 8px 0 0; text-align: center; font-size: 26px; color: var(--lavender); }
+.help-chip {
+  align-self: center; margin-top: 22px; padding: 6px 34px;
+  border: 3px solid var(--mid); border-radius: 30px;
+  background: rgba(250, 204, 21, .15); color: var(--mid);
+  font-size: 22px; font-weight: 700;
+}
+.help-items { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; }
+.help-item  { display: flex; align-items: center; gap: 28px; }
+.help-item > .ico { flex: 0 0 auto; width: 92px; display: grid; place-items: center; }
+.help-item h3 { margin: 0 0 4px; font-size: 38px; font-weight: 700; line-height: 48px; }
+.help-item p  { margin: 0; font-size: 26px; line-height: 34px; color: #cdd2f7; }
+.help-item.numbered p { font-size: 30px; line-height: 36px; color: #fff; }
+
+.num {
+  width: 78px; height: 78px; border-radius: 50%;
+  background: var(--cyan); color: var(--ink);
+  display: grid; place-items: center; font-size: 32px; font-weight: 700;
+}
+.ico-coin, .ico-enemy {
+  width: 92px; height: 92px; border-radius: 50%;
+  display: grid; place-items: center;
+}
+.ico-coin  { background: #ffd23f; box-shadow: 0 0 28px 8px rgba(255, 210, 63, .45); }
+.ico-enemy { background: var(--bad); box-shadow: 0 0 28px 8px rgba(255, 77, 77, .45); }
+.ico-clock {
+  width: 96px; height: 96px; border-radius: 50%; background: var(--teal);
+  display: grid; place-items: center;
+}
+
+.dots { position: absolute; left: 322px; top: 1211px; width: 130px; display: flex; justify-content: space-between; }
+.dots i {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #5a68ad; border: 2px solid #1a2260;
+}
+.dots i.on { background: var(--cyan); }
+
+/* ==========================================================================
+   TELA 4 - JOGO
+   ========================================================================== */
+.timer-pill {
+  position: absolute; left: 250px; top: 54px; width: 318px; height: 104px;
+  background: var(--navy); border: 3px solid var(--teal); border-radius: 52px;
+  display: flex; align-items: center;
+}
+.clock-icon {
+  margin-left: 36px; width: 54px; height: 54px; border-radius: 50%;
+  background: var(--teal); display: grid; place-items: center;
+}
+.clock-icon svg { width: 34px; height: 34px; }
+.timer-text { flex: 1; text-align: center; font-size: 44px; font-weight: 700; padding-right: 18px; }
+.timer-pill.low .timer-text { color: var(--bad); }
+
+.mode-title {
+  position: absolute; left: 0; right: 0; top: 208px; margin: 0;
+  text-align: center; font-size: 54px; font-weight: 700; line-height: 80px;
+}
+
+.diff-badge {
+  left: 326px; top: 288px; width: 166px; height: 46px;
+  border: 2px solid; border-radius: 23px; font-size: 22px;
+}
+.diff-badge.easy   { color: var(--good); border-color: var(--good); background: rgba(74, 222, 128, .15); }
+.diff-badge.medium { color: var(--mid);  border-color: var(--mid);  background: rgba(250, 204, 21, .15); }
+.diff-badge.hard   { color: var(--bad);  border-color: var(--bad);  background: rgba(255, 77, 77, .15); }
+
+#board {
+  position: absolute; left: 90px; top: 480px;
+  width: 640px; height: 640px;
+  touch-action: none;                 /* o dedo arrasta peças, não rola a página */
+}
+
+.btn-start {
+  position: absolute; left: 50%; margin-left: -169.5px; top: 1248px; width: 339px; height: 126px;
+  border-radius: 63px; background: var(--good); color: var(--ink);
+  font-size: 42px; font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+  transition: transform .12s, background .2s;
+}
+.btn-start:active { transform: scale(.96); }
+.btn-start.running { background: var(--cyan); }
+
+/* ==========================================================================
+   TELA 5 - OPÇÕES
+   ========================================================================== */
+.settings-card {
+  position: absolute; left: 54px; top: 330px; width: 711px;
+  background: rgba(8, 12, 45, .88); border: 3px solid var(--teal); border-radius: 42px;
+  padding: 16px 40px;
+}
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 120px; font-size: 34px; font-weight: 600;
+  border-bottom: 1px solid rgba(185, 192, 245, .2);
+}
+.setting-row:last-child { border-bottom: 0; }
+.setting-row.disabled em { font-style: normal; font-size: 28px; color: var(--lavender); font-weight: 400; }
+.setting-row input { display: none; }
+.switch {
+  position: relative; width: 112px; height: 62px; border-radius: 31px;
+  background: #3a4380; transition: background .2s;
+}
+.switch::after {
+  content: ""; position: absolute; left: 6px; top: 6px; width: 50px; height: 50px;
+  border-radius: 50%; background: #fff; transition: transform .2s;
+}
+input:checked + .switch { background: var(--cyan); }
+input:checked + .switch::after { transform: translateX(50px); }
+
+/* ---------- Aviso rápido (toast) ---------- */
+#toast {
+  position: absolute; left: 50%; bottom: 226px; transform: translateX(-50%);
+  max-width: 700px; padding: 16px 34px; border-radius: 40px;
+  background: rgba(8, 12, 45, .95); border: 2px solid var(--teal);
+  font-size: 26px; text-align: center; opacity: 0; pointer-events: none;
+  transition: opacity .25s; z-index: 10;
+}
+#toast.show { opacity: 1; }
+
+
+/* ==========================================================================
+   NOVAS TELAS: MODOS, FASES, JOGO (painel), JANELAS, INSTALAR
+   ========================================================================== */
+.install-pill {
+  position: absolute; left: 50%; top: 74px; transform: translateX(-50%);
+  height: 56px; padding: 0 28px; border-radius: 28px;
+  background: var(--navy); border: 2px solid var(--teal); color: var(--teal);
+  font-size: 22px; font-weight: 700;
+}
+.install-pill[hidden] { display: none; }
+
+/* ---------- Modo ---------- */
+.mode-card {
+  position: absolute; left: 92px; width: 635px; height: 210px;
+  border: 3px solid #fff; border-radius: 42px; color: var(--ink);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px;
+  transition: transform .12s;
+}
+.mode-card:active { transform: scale(.97); }
+.mode-card strong { font-size: 50px; font-weight: 700; line-height: 66px; }
+.mode-card span { font-size: 24px; line-height: 34px; text-align: center; }
+.mode-card.std   { top: 410px;  background: var(--cyan); }
+.mode-card.grav  { top: 660px;  background: #a78bfa; }
+.mode-card.speed { top: 910px;  background: #fb923c; }
+.mode-card.skill { top: 1160px; background: #f472b6; }
+
+/* ---------- Fases ---------- */
+.pill.purple.wide { left: 210px; width: 399px; }
+.levels-grid {
+  position: absolute; left: 74px; top: 372px; width: 671px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 26px;
+}
+.level-btn {
+  height: 160px; border-radius: 36px; border: 3px solid var(--teal);
+  background: rgba(8, 12, 45, .88);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.level-btn strong { font-size: 60px; line-height: 70px; }
+.level-btn span { font-size: 22px; color: var(--lavender); }
+.level-btn.done { border-color: var(--good); }
+.level-btn.done span { color: var(--good); }
+.level-btn.locked { opacity: .45; border-style: dashed; cursor: default; }
+
+/* ---------- Painel do jogo ---------- */
+.mode-title { font-size: 42px; }
+.hud {
+  position: absolute; left: 60px; right: 60px; top: 360px;
+  display: flex; gap: 14px; justify-content: space-between;
+}
+.chip {
+  flex: 1; height: 64px; border-radius: 32px; display: grid; place-items: center;
+  background: var(--navy); border: 2px solid rgba(185, 192, 245, .5);
+  font-size: 23px; font-weight: 600; white-space: nowrap;
+}
+.chip.warn { border-color: var(--bad); color: var(--bad); }
+.chip.on { border-color: var(--teal); color: var(--teal); }
+
+.tools {
+  position: absolute; left: 90px; top: 1146px; width: 640px;
+  display: flex; gap: 20px;
+}
+.tool-btn {
+  flex: 1; height: 82px; border-radius: 41px;
+  background: var(--navy); border: 3px solid var(--teal); font-size: 28px; font-weight: 600;
+}
+.tool-btn:disabled, .btn-start:disabled { opacity: .45; cursor: default; }
+.tool-btn:active:not(:disabled) { transform: scale(.96); }
+
+/* ---------- Janelas (confirmação, resultado, pausa) ---------- */
+.modal {
+  position: absolute; inset: 0; z-index: 30; display: none;
+  align-items: center; justify-content: center;
+  background: rgba(2, 5, 26, .86);
+}
+.modal.show { display: flex; animation: fade-in .2s ease; }
+.modal-card {
+  width: 700px; max-height: 1200px; overflow: auto; padding: 48px 44px 40px;
+  background: #0b1138; border: 3px solid var(--teal); border-radius: 48px; text-align: center;
+  box-shadow: 0 0 80px rgba(34, 214, 238, .25);
+}
+.modal-card.good { border-color: var(--good); box-shadow: 0 0 80px rgba(74, 222, 128, .25); }
+.modal-card.bad  { border-color: var(--bad);  box-shadow: 0 0 80px rgba(255, 77, 77, .25); }
+.modal-card h3 { margin: 0 0 16px; font-size: 48px; line-height: 58px; }
+.modal-card p { margin: 0 0 18px; font-size: 28px; line-height: 38px; color: #cdd2f7; }
+.modal-warn { color: var(--mid) !important; font-weight: 600; }
+.modal-stats { margin: 8px 0 22px; }
+.stat {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 8px; border-bottom: 1px solid rgba(185, 192, 245, .2);
+  font-size: 28px; color: #cdd2f7;
+}
+.stat strong { color: #fff; }
+.stat.rank.me { background: rgba(34, 214, 238, .15); border-radius: 16px; }
+.modal-actions { display: flex; flex-direction: column; gap: 16px; }
+.m-btn {
+  min-height: 96px; border-radius: 48px; font-size: 32px; font-weight: 700; padding: 0 24px;
+}
+.m-btn.primary { background: var(--cyan); color: var(--ink); }
+.m-btn.ghost { background: var(--navy); border: 3px solid var(--teal); }
+.m-btn:active { transform: scale(.97); }
+
+/* ---------- Opções: linha-botão e instalar ---------- */
+.setting-row.link { width: 100%; text-align: left; }
+.setting-row.link em { font-style: normal; font-size: 44px; color: var(--teal); }
+.install-card {
+  position: absolute; left: 54px; top: 340px; width: 711px; padding: 36px 40px;
+  background: rgba(8, 12, 45, .88); border: 3px solid var(--teal); border-radius: 42px;
+}
+.install-card h3 { margin: 22px 0 4px; font-size: 34px; color: var(--teal); }
+.install-card p { margin: 0; font-size: 26px; line-height: 36px; color: #cdd2f7; }
+.install-card .install-status { color: var(--mid); font-weight: 600; margin-bottom: 6px; }
+.install-card .m-btn { margin-top: 28px; width: 100%; }
+.install-card .m-btn[hidden] { display: none; }
